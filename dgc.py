@@ -31,7 +31,9 @@ def random_ua():
     return user_agent
 
 urllib3.disable_warnings()
-
+#Para evitar el error de openssl en Ubuntu 20.04 con CipherString con valor por defecto SECLEVEL=2
+#Explicación del error en https://weakdh.org/
+requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS = 'ALL:@SECLEVEL=1'
 
 
 #URLs del servicio

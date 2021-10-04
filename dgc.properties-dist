@@ -1,8 +1,6 @@
 #Propiedades del usuario solicitante
 #La fecha de nacimiento debe ser enformato AAAA-MM-DD
 [USERINFO]
-NOMBRE=
-APELLIDOS=
 DNI=
 NACIMIENTO=
 TELEFONO=

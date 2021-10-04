@@ -6,6 +6,8 @@ import urllib3
 import re
 import random
 import  configparser
+import jwt
+
 
 def getFilename_fromCd(cd):
     """
@@ -59,8 +61,6 @@ if len(fichero_config) != 1:
 datos_usuario = config_object["USERINFO"]
 
 try:
-    nombre = datos_usuario["NOMBRE"].upper()
-    apellidos = datos_usuario["APELLIDOS"].upper()
     dni = datos_usuario["DNI"].upper()
     nacimiento = datos_usuario["NACIMIENTO"]
     tlf = datos_usuario["TELEFONO"]
@@ -87,12 +87,13 @@ datos = {'pin': pin, 'phoneNumber': tlf,'identityDocument': dni,'birthdate': nac
 response = requests.post(base_url+verifica_pin,json=datos,headers=cabeceras,verify=False)
 if response.status_code == 200:
     token = response.json()['token']
+    token_decoded = jwt.decode(token, options={"verify_signature": False})
 else:
     print("El código no es correcto, reinicie el script")
     exit()
 
 #Obtención del certificado en PDF
-datos = {'identityDocument': dni,'birthdate': nacimiento, 'phoneNumber': tlf, 'name' : nombre , 'surname' : apellidos}
+datos = {'identityDocument': dni,'birthdate': nacimiento, 'phoneNumber': tlf, 'name' : token_decoded["name"] , 'surname' : token_decoded["surname"], 'cip' : token_decoded["cip"], 'cipAut' : token_decoded["cipAut"]}
 cabeceras = {'Authorization': 'Bearer ' + token, 'Origin' : 'https://ccdcantabria.scsalud.es', 'Referer': 'https://ccdcantabria.scsalud.es/' , 'User-Agent': user_agent}
 response = requests.post(base_url+certificado_pdf,json=datos,verify=False,headers=cabeceras)
 if response.status_code == 200:
